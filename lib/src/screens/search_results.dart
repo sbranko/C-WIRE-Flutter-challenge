@@ -76,6 +76,9 @@ class _SearchResultsState extends State<SearchResults> {
     if (isNetworkPresent) {
       getGames(0, widget.emailController.text.toString());
     } else {
+      setState(() {
+        loadingPage = false;
+      });
       _showToast(
           "No data connection. Consider turning on mobile data or turning on Wi-Fi.");
     }
@@ -202,6 +205,20 @@ class _SearchResultsState extends State<SearchResults> {
     );
   }
 
+  Widget noData() {
+    return new Container(
+      child: Center(
+        child: Text(
+          'No data',
+          style: _getTextStyle(16.0, FontWeight.w500),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
   Widget gamesWidget() {
     if (games.results == null && loadingPage) {
       return Container(
@@ -214,17 +231,7 @@ class _SearchResultsState extends State<SearchResults> {
         ),
       );
     } else if (games.results == null && !loadingPage) {
-      return new Container(
-        child: Center(
-          child: Text(
-            'No data',
-            style: _getTextStyle(16.0, FontWeight.w500),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
+      return noData();
     }
     return Scrollbar(
       child: SmartRefresher(
@@ -241,17 +248,7 @@ class _SearchResultsState extends State<SearchResults> {
           },
           onLoading: _onLoading,
           child: games.results.length == 0
-              ? new Container(
-                  child: Center(
-                    child: Text(
-                      'No data',
-                      style: _getTextStyle(16.0, FontWeight.w500),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                )
+              ? noData()
               : ListView.builder(
                   padding: EdgeInsets.all(8),
                   itemCount: games.results.length,
