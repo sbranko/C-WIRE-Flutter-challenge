@@ -33,3 +33,6 @@ Library
  - fluttertoast: ^7.0.2
  Toast Library for Flutter
  Now this toast library supports two kinds of toast messages one which requires BuildContext other with No BuildContext
+
+ - connectivity 0.4.9
+ This plugin allows Flutter apps to discover network connectivity and configure themselves accordingly. It can distinguish between cellular vs WiFi connection. This plugin works  for iOS and Android.
