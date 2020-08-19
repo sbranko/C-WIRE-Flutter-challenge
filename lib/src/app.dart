@@ -10,9 +10,18 @@ class MyApp extends StatelessWidget {
       title: 'C-Wire app',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        primarySwatch: Colors.blue,
-
+        primaryColor: Color(0xFFE2E1E1),
+        // accentTextTheme: Typography(platform: TargetPlatform.iOS).black,
+        textTheme: Theme.of(context).textTheme.apply(
+            bodyColor: Color(0xff666666),
+            displayColor: Color(0xff999999),
+            fontFamily: 'Montserrat'),
+        accentColor: Color(0xff999999),
+        textSelectionHandleColor: Color(0xff999999),
+        iconTheme: IconThemeData(color: Colors.orange),
+        primaryColorDark: Colors.red,
+        primaryColorLight: Colors.red,
+        secondaryHeaderColor: Colors.orange,
         // This makes the visual density adapt to the platform that you run
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
