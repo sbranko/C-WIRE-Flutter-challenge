@@ -3,6 +3,7 @@ import 'package:c_wire_app/src/resources/games_api_provider.dart';
 import 'package:c_wire_app/src/shared/LoadingBar.dart';
 import 'package:c_wire_app/src/shared/RefresherFooter.dart';
 import 'package:c_wire_app/src/shared/RefresherHeader.dart';
+import 'package:c_wire_app/src/utility/NetworkCheck.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -45,7 +46,7 @@ class _SearchResultsState extends State<SearchResults> {
     _scrollController = ScrollController();
 
     if (widget.emailController != null) {
-      getGames(0, widget.emailController.text.toString());
+      _checkInternet(_fetchPrefrence);
     }
   }
 
@@ -64,6 +65,20 @@ class _SearchResultsState extends State<SearchResults> {
         ),
       ),
     );
+  }
+
+  void _checkInternet(preference) {
+    NetworkCheck networkCheck = new NetworkCheck();
+    networkCheck.checkInternet(preference);
+  }
+
+  _fetchPrefrence(bool isNetworkPresent) {
+    if (isNetworkPresent) {
+      getGames(0, widget.emailController.text.toString());
+    } else {
+      _showToast(
+          "No data connection. Consider turning on mobile data or turning on Wi-Fi.");
+    }
   }
 
   //
@@ -141,7 +156,12 @@ class _SearchResultsState extends State<SearchResults> {
           SizedBox(
             width: 12.0,
           ),
-          Text(message),
+          Expanded(
+            child: Text(message,
+                style: _getTextStyle(12.0, FontWeight.w500),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2),
+          )
         ],
       ),
     );
@@ -183,7 +203,7 @@ class _SearchResultsState extends State<SearchResults> {
   }
 
   Widget gamesWidget() {
-    if (games.results == null) {
+    if (games.results == null && loadingPage) {
       return Container(
         child: Text(
           'Data is loading ...',
@@ -191,6 +211,18 @@ class _SearchResultsState extends State<SearchResults> {
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
           textAlign: TextAlign.center,
+        ),
+      );
+    } else if (games.results == null && !loadingPage) {
+      return new Container(
+        child: Center(
+          child: Text(
+            'No data',
+            style: _getTextStyle(16.0, FontWeight.w500),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            textAlign: TextAlign.center,
+          ),
         ),
       );
     }

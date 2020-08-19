@@ -1,7 +1,6 @@
+import 'package:c_wire_app/src/shared/NoMoreDataMessage.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
-import 'file:///C:/Users/IT/AndroidStudioProjects/flutter_app/lib/NoMoreData.dart';
 
 import 'LoadMoreMessage.dart';
 import 'LoadingBar.dart';
@@ -16,7 +15,7 @@ class RefresherFooter extends StatelessWidget {
         if (mode == LoadStatus.loading) {
           body = LoadingBar();
         } else if (mode == LoadStatus.idle) {
-          body = NoMoreData();
+          body = NoMoreDataMessage();
         } else if (mode == LoadStatus.canLoading) {
           body = LoadMoreMessage();
         }
