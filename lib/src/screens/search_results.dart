@@ -1,5 +1,6 @@
 import 'package:c_wire_app/src/models/games.dart';
 import 'package:c_wire_app/src/resources/games_api_provider.dart';
+import 'package:c_wire_app/src/screens/game_details.dart';
 import 'package:c_wire_app/src/shared/LoadingBar.dart';
 import 'package:c_wire_app/src/shared/RefresherFooter.dart';
 import 'package:c_wire_app/src/shared/RefresherHeader.dart';
@@ -54,7 +55,13 @@ class _SearchResultsState extends State<SearchResults> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.emailController.text.toString()),
+        title: Text(
+          'Search Results: ' + widget.emailController.text.toString(),
+          style: _getTextStyle(20.0, FontWeight.w500),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+          textAlign: TextAlign.center,
+        ),
       ),
       body: Center(
         child: ModalProgressHUD(
@@ -219,6 +226,21 @@ class _SearchResultsState extends State<SearchResults> {
     );
   }
 
+  void _awaitReturnValueFromThirdScreen(
+      BuildContext context, Results gameResults) async {
+    // start the GameDetails and wait for it to finish with a result
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => new GameDetails(gameResults),
+        ));
+
+    // after the GameDetails result comes back update the Text widget with it
+    setState(() {
+      textFieldController.text = result;
+    });
+  }
+
   Widget gamesWidget() {
     if (games.results == null && loadingPage) {
       return Container(
@@ -257,7 +279,10 @@ class _SearchResultsState extends State<SearchResults> {
                     Results gameResults = games.results[index];
                     return Card(
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          _awaitReturnValueFromThirdScreen(
+                              context, gameResults);
+                        },
                         child: Padding(
                           padding: EdgeInsets.all(8),
                           child: Row(

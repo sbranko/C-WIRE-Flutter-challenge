@@ -1,4 +1,5 @@
 C-WIRE-Flutter-challenge
+
 Our objective is to create minimal Flutter app, that is consisting of only 3 screens:
 
 Search / Home
@@ -15,6 +16,7 @@ Fork this repository with you GitHub account
 Run CWireApplication
 
 Getting Started
+
 Before you build this App from source code, please get an ApiKey from https://www.giantbomb.com/ and add your ApiKey in GamesApiProvider.dart.
 
 Library
@@ -36,3 +38,17 @@ Library
 
  - connectivity 0.4.9
  This plugin allows Flutter apps to discover network connectivity and configure themselves accordingly. It can distinguish between cellular vs WiFi connection. This plugin works  for iOS and Android.
+ 
+ - carousel_slider: ^2.2.1
+ A carousel slider widget.
+ Features: 
+	- Infinite scroll
+	- Custom child widgets
+	- Auto play
+
+ - flutter_html 1.0.2
+ A Flutter widget for rendering html and css as Flutter widgets.
+
+
+
+

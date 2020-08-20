@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:c_wire_app/src/models/game_details.dart';
 import 'package:c_wire_app/src/models/games.dart';
 import 'package:http/http.dart' show Client;
 
@@ -22,5 +23,15 @@ class GamesApiProvider {
     var parsedGamesList = json.decode(response.body);
 
     return Games.fromJson(parsedGamesList);
+  }
+
+  Future<GameDetails> getGameDetailsByGuid(String guid) async {
+    final String gameDetails = basicUrl +
+        'game/$guid/?api_key=$API_KEY&format=json&field_list=guid,id,name,description,image,platforms,genres,images';
+
+    final response = await client.get(gameDetails);
+    var parsedGamesList = json.decode(response.body);
+
+    return GameDetails.fromJson(parsedGamesList);
   }
 }
