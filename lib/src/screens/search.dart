@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class SearchScreen extends StatefulWidget {
+  static const routeName = '/';
+
   @override
   _SearchScreenState createState() {
     return _SearchScreenState();
@@ -10,7 +12,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  String text = '';
+  //String text = '';
 
   TextEditingController _controller;
 
@@ -43,16 +45,14 @@ class _SearchScreenState extends State<SearchScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(25.0)))),
                 onSubmitted: (String value) async {
                   // start the SearchResults and wait for it to finish with a result
-                  final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SearchResults(_controller),
-                      ));
+                  final result = await Navigator.pushNamed(
+                      context, SearchResults.routeName,
+                      arguments: _controller.text.toString());
 
-                  // after the SearchResults result comes back update the Text widget with it
+                  /* // after the SearchResults result comes back update the Text widget with it
                   setState(() {
                     text = result;
-                  });
+                  });*/
                 },
               ),
             )

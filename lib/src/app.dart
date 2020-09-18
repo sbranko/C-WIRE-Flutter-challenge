@@ -1,4 +1,6 @@
+import 'package:c_wire_app/src/screens/game_details.dart';
 import 'package:c_wire_app/src/screens/search.dart';
+import 'package:c_wire_app/src/screens/search_results.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -25,7 +27,57 @@ class MyApp extends StatelessWidget {
         // This makes the visual density adapt to the platform that you run
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: SearchScreen(),
+      onGenerateRoute: routes,
+      onUnknownRoute: (settings) => MaterialPageRoute(
+          builder: (context) => UndefinedView(
+                name: settings.name,
+              )),
+      initialRoute: SearchScreen.routeName,
+    );
+  }
+
+  Route<dynamic> routes(RouteSettings settings) {
+    switch (settings.name) {
+      case '/':
+        return MaterialPageRoute(builder: (context) => SearchScreen());
+      case SearchResults.routeName:
+        String searchArgument = settings.arguments;
+
+        return MaterialPageRoute(
+          builder: (context) {
+            return SearchResults(
+              searchWord: searchArgument,
+            );
+          },
+        );
+      case GameDetailsData.routeName:
+        var game = settings.arguments;
+
+        return MaterialPageRoute(
+          builder: (context) {
+            return GameDetailsData(
+              results: game,
+            );
+          },
+        );
+      default:
+        return MaterialPageRoute(
+            builder: (context) => UndefinedView(
+                  name: settings.name,
+                ));
+    }
+  }
+}
+
+class UndefinedView extends StatelessWidget {
+  final String name;
+  const UndefinedView({Key key, this.name}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('Route for $name is not defined'),
+      ),
     );
   }
 }

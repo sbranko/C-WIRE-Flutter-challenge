@@ -13,19 +13,22 @@ import 'package:ok_image/ok_image.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class SearchResults extends StatefulWidget {
-  var emailController = new TextEditingController();
+  final String searchWord;
 
-  SearchResults(this.emailController);
+  static const routeName = '/search_results';
+
+  const SearchResults({
+    Key key,
+    @required this.searchWord,
+  }) : super(key: key);
 
   @override
   _SearchResultsState createState() {
-    return _SearchResultsState();
+    return new _SearchResultsState(this.searchWord);
   }
 }
 
 class _SearchResultsState extends State<SearchResults> {
-  // this allows us to access the TextField text
-  TextEditingController textFieldController = TextEditingController();
   FToast fToast;
 
   Games games = new Games();
@@ -38,15 +41,17 @@ class _SearchResultsState extends State<SearchResults> {
   int currentPage = 0;
   bool loadingPage = true;
 
+  _SearchResultsState(String searchWord);
+
   @override
   Future<void> initState() {
     super.initState();
-    fToast = FToast(context);
+    fToast = FToast();
 
     _refreshController = RefreshController();
     _scrollController = ScrollController();
 
-    if (widget.emailController != null) {
+    if (widget.searchWord != null) {
       _checkInternet(_fetchPrefrence);
     }
   }
@@ -56,7 +61,7 @@ class _SearchResultsState extends State<SearchResults> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Search Results: ' + widget.emailController.text.toString(),
+          'Search Results: ' + widget.searchWord,
           style: _getTextStyle(20.0, FontWeight.w500),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
@@ -79,9 +84,9 @@ class _SearchResultsState extends State<SearchResults> {
     networkCheck.checkInternet(preference);
   }
 
-  _fetchPrefrence(bool isNetworkPresent) {
+  _fetchPrefrence(bool isNetworkPresent) async {
     if (isNetworkPresent) {
-      getGames(0, widget.emailController.text.toString());
+      await getGames(0, widget.searchWord.toString());
     } else {
       setState(() {
         loadingPage = false;
@@ -138,6 +143,9 @@ class _SearchResultsState extends State<SearchResults> {
 
       setState(() {
         if (games != null && games.results != null) {
+          if (pageNumber == 0) {
+            games.results.clear();
+          }
           games.results.addAll(result.results);
         } else {
           games = result;
@@ -199,7 +207,7 @@ class _SearchResultsState extends State<SearchResults> {
   }
 
   void _onLoading() async {
-    await getGames(currentPage + 1, widget.emailController.text.toString());
+    await getGames(currentPage + 1, widget.searchWord.toString());
     _refreshController.loadComplete();
   }
 
@@ -229,16 +237,8 @@ class _SearchResultsState extends State<SearchResults> {
   void _awaitReturnValueFromThirdScreen(
       BuildContext context, Results gameResults) async {
     // start the GameDetails and wait for it to finish with a result
-    final result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => new GameDetails(gameResults),
-        ));
-
-    // after the GameDetails result comes back update the Text widget with it
-    setState(() {
-      textFieldController.text = result;
-    });
+    await Navigator.pushNamed(context, GameDetailsData.routeName,
+        arguments: gameResults);
   }
 
   Widget gamesWidget() {
@@ -263,9 +263,9 @@ class _SearchResultsState extends State<SearchResults> {
           header: RefresherHeader(),
           footer: RefresherFooter(),
           enablePullUp: true,
-          enablePullDown: false,
+          enablePullDown: true,
           onRefresh: () async {
-            await getGames(0, widget.emailController.text.toString());
+            await getGames(0, widget.searchWord.toString());
             _refreshController.refreshCompleted();
           },
           onLoading: _onLoading,
@@ -300,7 +300,8 @@ class _SearchResultsState extends State<SearchResults> {
                                     padding: EdgeInsets.only(
                                         left: 16.0, bottom: 8.0),
                                     child: Text(
-                                      gameResults.name,
+                                      gameResults.name +
+                                          games.results.length.toString(),
                                       style:
                                           _getTextStyle(16.0, FontWeight.w500),
                                       overflow: TextOverflow.ellipsis,

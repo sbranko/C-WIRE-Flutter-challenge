@@ -10,18 +10,23 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
-class GameDetails extends StatefulWidget {
-  gameResult.Results results;
+class GameDetailsData extends StatefulWidget {
+  static const routeName = '/game_details';
 
-  GameDetails(this.results);
+  final gameResult.Results results;
+
+  const GameDetailsData({
+    Key key,
+    @required this.results,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return new _GameDetailsState(this.results);
+    return new _GameDetailsDataState(this.results);
   }
 }
 
-class _GameDetailsState extends State<GameDetails> {
+class _GameDetailsDataState extends State<GameDetailsData> {
   gameResult.Results game;
   gameDetailsResults.Results gameDetails;
   List<String> imageUrlList = [];
@@ -37,7 +42,7 @@ class _GameDetailsState extends State<GameDetails> {
 
   DataContainerMessages dataMessage = new DataContainerMessages();
 
-  _GameDetailsState(gameResult.Results results) {
+  _GameDetailsDataState(gameResult.Results results) {
     if (results != null) {
       this.game = results;
     }
@@ -46,7 +51,7 @@ class _GameDetailsState extends State<GameDetails> {
   @override
   void initState() {
     super.initState();
-    fToast = FToast(context);
+    fToast = FToast();
 
     getGameDetails(widget.results.guid.toString());
   }
@@ -57,153 +62,180 @@ class _GameDetailsState extends State<GameDetails> {
     } else if (gameDetails == null && !loadingPage) {
       return dataMessage.noData();
     }
-    return new SingleChildScrollView(
-        child: new Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-          new Stack(
-            children: <Widget>[
-              new Positioned(
-                child: new Align(
-                  alignment: FractionalOffset.topCenter,
-                  child: CarouselSlider(
-                    options: CarouselOptions(
-                      autoPlay: true,
-                      aspectRatio: 2.0,
-                      enlargeCenterPage: true,
+    return new Container(
+      child: CustomScrollView(
+        slivers: <Widget>[
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                new Stack(
+                  children: <Widget>[
+                    CarouselSlider(
+                      options: CarouselOptions(
+                        autoPlay: true,
+                        aspectRatio: 2.0,
+                        enlargeCenterPage: true,
+                      ),
+                      items: imageSliders != null ? imageSliders : [],
                     ),
-                    items: imageSliders != null ? imageSliders : [],
-                  ),
+                  ],
                 ),
-              )
-            ],
+              ],
+            ),
           ),
-          Divider(),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Expanded(
-                child: IntrinsicHeight(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding:
-                              EdgeInsets.only(left: 16.0, bottom: 8.0, top: 40),
-                          child: Text(
-                            gameDetails != null ? gameDetails.name : '',
-                            style: _getTextStyle(24.0, FontWeight.w600),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            textAlign: TextAlign.start,
-                          ),
-                        ),
-                        Padding(
-                          padding:
-                              EdgeInsets.only(left: 16.0, bottom: 8.0, top: 16),
-                          child: gameDetails != null
-                              ? Html(
-                                  data: gameDetails.description,
-                                  onLinkTap: (url) {
-                                    print("Opening $url...");
-                                  },
-                                  onImageTap: (src) {
-                                    print(src);
-                                  },
-                                  onImageError: (exception, stackTrace) {
-                                    print(exception);
-                                  },
-                                )
-                              : Text(
-                                  'No description',
-                                  style: _getTextStyle(16.0, FontWeight.w300),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  textAlign: TextAlign.start,
-                                ),
-                        ),
-                      ]),
-                ),
-              )
-            ]),
-          ),
-          Divider(),
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Expanded(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding:
-                            EdgeInsets.only(left: 16.0, bottom: 8.0, top: 8),
-                        child: Text(
-                          'Platforms',
-                          style: _getTextStyle(20.0, FontWeight.w500),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          textAlign: TextAlign.start,
-                        ),
-                      ),
-                      ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemCount: platforms.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.only(left: 16.0, bottom: 4),
-                            child: Text(
-                              '${platforms[index].name}',
-                              style: _getTextStyle(16.0, FontWeight.w300),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              textAlign: TextAlign.start,
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                SingleChildScrollView(
+                    child: Column(
+                  children: [
+                    Divider(),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 16.0, bottom: 8.0, top: 40),
+                                      child: Text(
+                                        gameDetails != null
+                                            ? gameDetails.name
+                                            : '',
+                                        style: _getTextStyle(
+                                            24.0, FontWeight.w600),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 16.0, bottom: 8.0, top: 16),
+                                      child: gameDetails != null
+                                          ? Html(
+                                              data: gameDetails.description !=
+                                                      null
+                                                  ? gameDetails.description
+                                                  : '',
+                                              onLinkTap: (url) {
+                                                print("Opening $url...");
+                                              },
+                                              onImageTap: (src) {
+                                                print(src);
+                                              },
+                                              onImageError:
+                                                  (exception, stackTrace) {
+                                                print(exception);
+                                              },
+                                            )
+                                          : Text(
+                                              'No description',
+                                              style: _getTextStyle(
+                                                  16.0, FontWeight.w300),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                              textAlign: TextAlign.start,
+                                            ),
+                                    ),
+                                  ]),
+                            )
+                          ]),
+                    ),
+                    Divider(),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 16.0, bottom: 8.0, top: 8),
+                                      child: Text(
+                                        'Platforms',
+                                        style: _getTextStyle(
+                                            20.0, FontWeight.w500),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                    ),
+                                    ListView.builder(
+                                      scrollDirection: Axis.vertical,
+                                      shrinkWrap: true,
+                                      itemCount: platforms.length,
+                                      itemBuilder: (context, index) {
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 16.0, bottom: 4),
+                                          child: Text(
+                                            '${platforms[index].name}',
+                                            style: _getTextStyle(
+                                                16.0, FontWeight.w300),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ]),
                             ),
-                          );
-                        },
-                      ),
-                    ]),
-              ),
-              Expanded(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding:
-                            EdgeInsets.only(left: 16.0, bottom: 8.0, top: 8),
-                        child: Text(
-                          'Genres',
-                          style: _getTextStyle(20.0, FontWeight.w500),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          textAlign: TextAlign.start,
-                        ),
-                      ),
-                      ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemCount: genres.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.only(left: 16.0, bottom: 4),
-                            child: Text(
-                              '${genres[index].name}',
-                              style: _getTextStyle(16.0, FontWeight.w300),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              textAlign: TextAlign.start,
+                            Expanded(
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 16.0, bottom: 8.0, top: 8),
+                                      child: Text(
+                                        'Genres',
+                                        style: _getTextStyle(
+                                            20.0, FontWeight.w500),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                    ),
+                                    ListView.builder(
+                                      scrollDirection: Axis.vertical,
+                                      shrinkWrap: true,
+                                      itemCount: genres.length,
+                                      itemBuilder: (context, index) {
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 16.0, bottom: 4),
+                                          child: Text(
+                                            '${genres[index].name}',
+                                            style: _getTextStyle(
+                                                16.0, FontWeight.w300),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ]),
                             ),
-                          );
-                        },
-                      ),
-                    ]),
-              ),
-            ]),
+                          ]),
+                    ),
+                  ],
+                ))
+              ],
+            ),
           ),
-        ]));
+        ],
+      ),
+    );
   }
 
   _showToast(String message) {
