@@ -1,4 +1,5 @@
 import 'package:c_wire_app/src/models/games.dart';
+import 'package:c_wire_app/src/models/platforms.dart';
 import 'package:c_wire_app/src/resources/games_api_provider.dart';
 import 'package:c_wire_app/src/screens/game_details.dart';
 import 'package:c_wire_app/src/shared/LoadingBar.dart';
@@ -143,9 +144,6 @@ class _SearchResultsState extends State<SearchResults> {
 
       setState(() {
         if (games != null && games.results != null) {
-          if (pageNumber == 0) {
-            games.results.clear();
-          }
           games.results.addAll(result.results);
         } else {
           games = result;
@@ -263,7 +261,7 @@ class _SearchResultsState extends State<SearchResults> {
           header: RefresherHeader(),
           footer: RefresherFooter(),
           enablePullUp: true,
-          enablePullDown: true,
+          enablePullDown: false,
           onRefresh: () async {
             await getGames(0, widget.searchWord.toString());
             _refreshController.refreshCompleted();
@@ -300,8 +298,7 @@ class _SearchResultsState extends State<SearchResults> {
                                     padding: EdgeInsets.only(
                                         left: 16.0, bottom: 8.0),
                                     child: Text(
-                                      gameResults.name +
-                                          games.results.length.toString(),
+                                      gameResults.name,
                                       style:
                                           _getTextStyle(16.0, FontWeight.w500),
                                       overflow: TextOverflow.ellipsis,

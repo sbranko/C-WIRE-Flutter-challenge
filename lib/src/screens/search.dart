@@ -12,8 +12,6 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  //String text = '';
-
   TextEditingController _controller;
 
   void initState() {
@@ -39,20 +37,14 @@ class _SearchScreenState extends State<SearchScreen> {
                 controller: _controller,
                 decoration: InputDecoration(
                     labelText: "Search",
-                    hintText: "Search game name",
+                    hintText: "Enter game name",
                     prefixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(25.0)))),
                 onSubmitted: (String value) async {
                   // start the SearchResults and wait for it to finish with a result
-                  final result = await Navigator.pushNamed(
-                      context, SearchResults.routeName,
+                  await Navigator.pushNamed(context, SearchResults.routeName,
                       arguments: _controller.text.toString());
-
-                  /* // after the SearchResults result comes back update the Text widget with it
-                  setState(() {
-                    text = result;
-                  });*/
                 },
               ),
             )

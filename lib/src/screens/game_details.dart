@@ -1,5 +1,7 @@
 import 'package:c_wire_app/src/models/game_details.dart' as gameDetailsResults;
 import 'package:c_wire_app/src/models/games.dart' as gameResult;
+import 'package:c_wire_app/src/models/genres.dart';
+import 'package:c_wire_app/src/models/platforms.dart';
 import 'package:c_wire_app/src/resources/games_api_provider.dart';
 import 'package:c_wire_app/src/shared/LoadingBar.dart';
 import 'package:c_wire_app/src/utility/DataContainerMessages.dart';
@@ -31,8 +33,8 @@ class _GameDetailsDataState extends State<GameDetailsData> {
   gameDetailsResults.Results gameDetails;
   List<String> imageUrlList = [];
   List<Widget> imageSliders;
-  List<gameDetailsResults.Genres> genres = [];
-  List<gameDetailsResults.Platforms> platforms = [];
+  List<Genres> genres = [];
+  List<Platforms> platforms = [];
 
   FToast fToast;
 
